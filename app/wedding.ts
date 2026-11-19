@@ -66,7 +66,7 @@ export const wedding: Wedding = {
     greeters: "চর্যা, শুদ্ধ ও অর্জন",
     phones: [
       { label: "01916-313022", href: "tel:+8801916313022" },
-      { label: "01828049230", href: "tel:+8801828049230" },
+      { label: "01828-049230", href: "tel:+8801828049230" },
     ],
   },
   year: 2026,
