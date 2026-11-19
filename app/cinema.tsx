@@ -63,13 +63,14 @@ export function Cinema({ intensity }: { intensity: number }) {
         cleanups.push(() => target.classList.remove(name));
       }
 
-      const distance = intensity * (conditions.desktop ? 26 : 8);
+      const desktop = conditions.desktop;
+      const distance = intensity * (desktop ? 26 : 5);
       for (const scene of document.querySelectorAll("[data-scene]")) {
         const artwork = scene.querySelectorAll(".sprig, .couple-seal, .scene-art");
         if (!artwork.length) continue;
         gsap.fromTo(artwork, { "--scene-drift": `${distance}px` }, {
           "--scene-drift": `${-distance}px`, ease: "none",
-          scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: conditions.desktop ? 1 : 0.35 },
+          scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: 1 },
         });
       }
 
@@ -77,11 +78,23 @@ export function Cinema({ intensity }: { intensity: number }) {
       if (cover) {
         gsap.fromTo(cover, { "--cover-scroll": "-2.5px" }, {
           "--cover-scroll": "2.5px", ease: "none",
-          scrollTrigger: { trigger: cover, start: "top bottom", end: "bottom top", scrub: 0.35 },
+          scrollTrigger: { trigger: cover, start: "top bottom", end: "bottom top", scrub: 0.9 },
         });
       }
 
-      for (const entry of document.querySelectorAll(".portrait-entry")) {
+      const portraits = document.querySelectorAll(".portrait-entry");
+      const connection = document.querySelector(".portrait-connection");
+      let arrivals = 0;
+      for (const entry of portraits) {
+        const plane = entry.querySelector<HTMLElement>(".portrait-plane");
+        function onArrival(event: AnimationEvent) {
+          if (event.target !== plane || event.animationName !== "portrait-arrival") return;
+          plane?.removeEventListener("animationend", onArrival);
+          arrivals++;
+          if (arrivals === portraits.length && connection) animateClass(connection, "is-connection-drawn");
+        }
+        plane?.addEventListener("animationend", onArrival);
+        cleanups.push(() => plane?.removeEventListener("animationend", onArrival));
         entry.classList.add("portrait-prepared");
         cleanups.push(() => entry.classList.remove("portrait-prepared"));
         animateClass(entry, "is-portrait-arriving", entry.querySelector("img") ?? undefined);
@@ -89,24 +102,23 @@ export function Cinema({ intensity }: { intensity: number }) {
       for (const copy of document.querySelectorAll(".portrait-copy")) {
         animateClass(copy, "is-portrait-named");
       }
-      const connection = document.querySelector(".portrait-connection");
-      if (connection) animateClass(connection, "is-connection-drawn");
 
       for (const linework of document.querySelectorAll(".ink-reveal")) {
         const ink = gsap.fromTo(linework.querySelectorAll("[data-ink]"),
           { strokeDasharray: 1, strokeDashoffset: 1 },
-          { strokeDashoffset: 0, duration: 1.42, stagger: 0.03, ease: "sine.inOut", paused: true });
+          { strokeDashoffset: 0, duration: desktop ? 1.42 : 2, stagger: 0.03, ease: "sine.inOut", paused: true });
         watch(linework, () => ink.play());
       }
 
       for (const panel of document.querySelectorAll(".event-panel")) {
         const copy = panel.querySelector(".event-copy");
         if (!copy) continue;
-        const x = conditions.desktop ? (panel.classList.contains("haldi") ? 18 : -18) : 0;
+        const x = desktop ? (panel.classList.contains("haldi") ? 18 : -18) : 0;
         const act = gsap.timeline({ paused: true, defaults: { ease: "sine.out" } })
-          .from(copy, { x, y: x ? 0 : 8, opacity: 0.9, duration: 1, clearProps: "transform,opacity" })
-          .fromTo(copy, { "--act-rule": 0 }, { "--act-rule": 1, duration: 1.05 }, 0.13)
-          .from(copy.children, { y: 6, stagger: 0.075, duration: 0.63, clearProps: "transform" }, 0.18);
+          .from(copy, { x, y: desktop ? 0 : 4, opacity: 0.94, duration: 1, clearProps: "transform,opacity" })
+          .fromTo(copy, { "--act-rule": 0 }, { "--act-rule": 1, duration: 1.05 }, 0.13);
+        if (desktop) act.from(copy.children, { y: 6, stagger: 0.075, duration: 0.63, clearProps: "transform" }, 0.18);
+        else act.timeScale(0.75);
         watch(copy, () => {
           panel.classList.add("is-staged");
           act.play();
@@ -123,6 +135,7 @@ export function Cinema({ intensity }: { intensity: number }) {
             y: 7, scale: 0.9, opacity: 0.78, stagger: 0.14, duration: 1.25, ease: "sine.out",
             clearProps: "transform,opacity",
           }, 0);
+        if (!desktop) finish.timeScale(0.75);
         watch(closing, () => {
           finale.classList.add("is-finale");
           finish.play();

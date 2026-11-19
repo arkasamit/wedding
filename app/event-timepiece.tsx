@@ -12,30 +12,27 @@ function angles(reading: TimepieceReading) {
   return { hour: (reading.hour % 12) * 30 + reading.minute / 2, minute: reading.minute * 6 };
 }
 
-function handPosition(angle: number, previous: number | undefined, forward: boolean, fullSweep = false) {
-  const from = previous ?? 0;
-  let end = angle;
-  if (previous === undefined && fullSweep) end += 360;
-  if (previous !== undefined) {
-    if (forward && end < from) end += 360;
-    if (!forward && end > from) end -= 360;
-  }
-  return {
-    "--hand-angle": `${angle}deg`,
-    "--hand-from": `${from}deg`,
-    "--hand-end": `${end}deg`,
-  } as CSSProperties;
+function nextHandAngle(current: number, target: number, forward: boolean) {
+  const clockwise = ((target - current) % 360 + 360) % 360;
+  return current + (forward || clockwise === 0 ? clockwise : clockwise - 360);
 }
 
 export function EventTimepiece({ readings }: { readings: readonly TimepieceReading[] }) {
   const opened = useContext(EntranceOpened);
   const element = useRef<HTMLDivElement>(null);
   const [entered, setEntered] = useState(false);
-  const [selection, setSelection] = useState({ index: 0, previous: null as number | null });
+  const [selection, setSelection] = useState(() => ({ index: 0, ...angles(readings[0]) }));
   const reading = readings[selection.index];
-  const current = angles(reading);
-  const previous = selection.previous === null ? undefined : angles(readings[selection.previous]);
-  const forward = selection.previous === null || selection.index > selection.previous;
+
+  function select(index: number) {
+    const target = angles(readings[index]);
+    setEntered(true);
+    setSelection(last => ({
+      index,
+      hour: nextHandAngle(last.hour, target.hour, index > last.index),
+      minute: nextHandAngle(last.minute, target.minute, index > last.index),
+    }));
+  }
 
   useEffect(() => {
     const node = element.current;
@@ -50,7 +47,7 @@ export function EventTimepiece({ readings }: { readings: readonly TimepieceReadi
     return () => observer.disconnect();
   }, [opened]);
 
-  return <div className="event-timepiece" data-ambient="" data-animate={entered || selection.previous !== null} ref={element}>
+  return <div className="event-timepiece" data-ambient="" data-ready={opened} data-animate={entered} ref={element}>
     <div className="timepiece-display">
       <div className="event-calendar">
         <div className="event-calendar-month">{reading.monthLabel}</div>
@@ -74,14 +71,14 @@ export function EventTimepiece({ readings }: { readings: readonly TimepieceReadi
             transform={`rotate(${i * 30} 50 50)`}
           />)}
           {dialNumbers.map(([value, x, y]) => <text className="watch-number" key={value} x={x} y={y}>{value}</text>)}
-          <g key={selection.index}>
+          <g>
             <path
               className="watch-hand watch-hour" d="M50 54V29"
-              style={handPosition(current.hour, previous?.hour, forward)}
+              style={{ "--hand-angle": `${selection.hour}deg` } as CSSProperties}
             />
             <path
               className="watch-hand watch-minute" d="M50 55V22"
-              style={handPosition(current.minute, previous?.minute, forward, true)}
+              style={{ "--hand-angle": `${selection.minute}deg` } as CSSProperties}
             />
           </g>
           <circle className="watch-pin" cx="50" cy="50" r="3" />
@@ -95,7 +92,7 @@ export function EventTimepiece({ readings }: { readings: readonly TimepieceReadi
           key={label}
           type="button"
           aria-pressed={selection.index === index}
-          onClick={() => setSelection((last) => last.index === index ? last : { index, previous: last.index })}
+          onClick={() => select(index)}
         >{label}</button>)}
       </div>
       <span className="sr-only" role="status">{reading.label}, {reading.day} {reading.monthLabel}, {reading.time}</span>

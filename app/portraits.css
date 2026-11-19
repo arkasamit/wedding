@@ -1,4 +1,4 @@
-.portrait-grid { position: relative; isolation: isolate; container-type: inline-size; }
+.portrait-grid { position: relative; isolation: isolate; container-type: inline-size; --portrait-distance: clamp(62px, 7vw, 90px); }
 .portrait-entry {
   position: relative;
   isolation: isolate;
@@ -16,8 +16,8 @@
   opacity: .58;
   pointer-events: none;
 }
-[data-portrait="left"] { --portrait-slide: -48px; --portrait-delay: 0s; }
-[data-portrait="right"] { --portrait-slide: 48px; --portrait-delay: .12s; }
+[data-portrait="left"] { --portrait-slide: calc(0px - var(--portrait-distance)); --portrait-delay: 0s; }
+[data-portrait="right"] { --portrait-slide: var(--portrait-distance); --portrait-delay: .16s; }
 [data-portrait="left"] .portrait-mandala { left: -27%; }
 [data-portrait="right"] .portrait-mandala { right: -27%; }
 .portrait-prepared:not(.is-portrait-arriving) .portrait-plane {
@@ -26,11 +26,10 @@
 .portrait-prepared:not(.is-portrait-arriving) .portrait-frame path { stroke-dashoffset: 1; }
 .portrait-prepared:not(.is-portrait-arriving) .portrait-mandala { rotate: -10deg; }
 .is-portrait-arriving .portrait-plane {
-  animation: portrait-arrival 2.8s var(--portrait-delay) ease-in-out backwards;
-  animation-play-state: var(--ambient-state);
+  animation: portrait-arrival 2.6s var(--portrait-delay) cubic-bezier(.37,.08,.45,1) backwards;
 }
 .is-portrait-arriving .portrait-mandala {
-  animation: portrait-mandala-spin 6s var(--portrait-delay) ease-in-out both;
+  animation: portrait-mandala-spin 3.2s var(--portrait-delay) ease-in-out both;
   animation-play-state: var(--ambient-state);
 }
 @keyframes portrait-arrival { from { translate: var(--portrait-slide) 0; } to { translate: 0 0; } }
@@ -44,7 +43,7 @@
   color: var(--gold);
   pointer-events: none;
 }
-.portrait-frame path, .portrait-name-flourish path, .portrait-light-line {
+.portrait-frame path, .portrait-name-flourish path, .portrait-connection path {
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -53,27 +52,28 @@
 }
 .portrait-frame path { stroke-width: 1.7; vector-effect: non-scaling-stroke; }
 .portrait-frame path:nth-child(2) { stroke-width: .74; opacity: .78; }
-.is-portrait-arriving .portrait-frame path { animation: portrait-gold-draw 3s calc(.55s + var(--portrait-delay)) ease-in-out both var(--ambient-state); }
-.is-portrait-arriving .portrait-frame path:nth-child(2) { animation-delay: calc(.85s + var(--portrait-delay)); }
+.is-portrait-arriving .portrait-frame path { animation: portrait-gold-draw 2.15s calc(.2s + var(--portrait-delay)) ease-in-out both var(--ambient-state); }
+.is-portrait-arriving .portrait-frame path:nth-child(2) { animation-delay: calc(.35s + var(--portrait-delay)); }
 @keyframes portrait-gold-draw { from { stroke-dashoffset: 1; } }
 
 .portrait-connection {
   position: absolute;
-  z-index: 0;
-  top: calc(min(24rem, (100cqw - var(--portrait-gap)) / 2) * .605);
-  left: 50%;
-  translate: -50% -50%;
-  width: calc(var(--portrait-gap) + 1.95rem);
-  height: auto;
+  z-index: 2;
+  overflow: visible;
+  opacity: 0;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
   color: var(--gold);
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--gold) 70%, transparent));
   pointer-events: none;
 }
-.portrait-light-line { stroke-width: 2.3; }
-.portrait-light-jewel { stroke: currentColor; stroke-width: 1.3; fill: var(--paper); }
-.portrait-connection.is-connection-drawn .portrait-light-line { animation: portrait-gold-draw 1.38s .26s var(--ease-glide) both; }
-.portrait-connection.is-connection-drawn .portrait-light-jewel { animation: portrait-jewel .92s .87s var(--ease-settle) both; }
-@keyframes portrait-jewel { from { opacity: 0; } }
+.portrait-connection path { stroke-width: clamp(1.75px, .25vw, 2.65px); vector-effect: non-scaling-stroke; }
+.portrait-connection.is-connection-drawn { animation: portrait-connection-fade 3.6s ease-in-out both var(--ambient-state); }
+.is-connection-drawn path { animation: portrait-gold-draw 2s ease-in-out both var(--ambient-state); }
+@keyframes portrait-connection-fade {
+  0%, 100% { opacity: 0; }
+  12%, 77% { opacity: 1; }
+}
 
 .portrait-copy { font-size: clamp(1.13rem, 1rem + .55vw, 1.36rem); }
 .portrait-copy .kicker { font-size: clamp(1.15rem, 1rem + .45vw, 1.34rem); }
@@ -87,9 +87,9 @@
 }
 .portrait-name-flourish path { stroke-width: 1.6; }
 .is-portrait-named .portrait-ink-name {
-  animation: portrait-write 1.22s var(--portrait-delay) var(--ease-settle) backwards;
+  animation: portrait-write .85s var(--portrait-delay) var(--ease-settle) backwards;
 }
-.is-portrait-named .portrait-name-flourish path { animation: portrait-gold-draw 1.18s calc(.63s + var(--portrait-delay)) var(--ease-settle) both; }
+.is-portrait-named .portrait-name-flourish path { animation: portrait-gold-draw .85s calc(.32s + var(--portrait-delay)) var(--ease-settle) both; }
 @keyframes portrait-write {
   from { opacity: .78; transform: translateY(3px); }
 }
@@ -126,21 +126,20 @@
 }
 
 @media (max-width: 600px) {
-  [data-portrait="left"] { --portrait-slide: -24px; }
-  [data-portrait="right"] { --portrait-slide: 24px; --portrait-delay: 0s; }
-  .portrait-entry { width: min(82%, 19rem); }
+  .portrait-grid {
+    --portrait-distance: clamp(40px, 12vw, 56px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .portrait { display: contents; }
+  .portrait-entry { grid-row: 1; }
+  [data-portrait="left"] .portrait-entry { grid-column: 1; }
+  [data-portrait="right"] .portrait-entry { grid-column: 2; }
+  .portrait-copy { grid-column: 1 / -1; margin-top: 0; }
+  [data-portrait="right"] { --portrait-delay: 0s; }
   .portrait-mandala { width: 74%; }
   [data-portrait="left"] .portrait-mandala { left: -22%; }
   [data-portrait="right"] .portrait-mandala { right: -22%; }
-  .portrait-connection {
-    position: static;
-    justify-self: center;
-    translate: none;
-    rotate: 90deg;
-    width: 3.45rem;
-    height: 1rem;
-  }
-  .portrait-petals i:nth-child(n+6) { display: none; }
+  .portrait-petals i:nth-child(n+4) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .portrait-petals { display: none; }

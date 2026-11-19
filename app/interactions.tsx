@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Copy, Check, Heart } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { Fragment, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { Alpana } from "./art";
 import type { Person } from "./wedding";
 
@@ -21,12 +21,44 @@ function tiltPortrait(event: ReactPointerEvent<HTMLDivElement>) {
 
 export function Portraits({ people }: { people: readonly [Person, Person] }) {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const connection = useRef<SVGSVGElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const [focused, setFocused] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [visible, setVisible] = useState([false, false]);
   const source = hovered ?? selected ?? focused;
   const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const svg = connection.current;
+    const grid = svg?.closest(".portrait-grid");
+    if (!svg || !grid || reducedMotion) return;
+    const [groom, bride] = grid.querySelectorAll(".portrait-entry");
+    const [groomFrame, brideFrame] = grid.querySelectorAll<SVGSVGElement>(".portrait-frame");
+    function fitHeartToFrames() {
+      if (!svg || !grid) return;
+      const groomMatrix = groomFrame.getScreenCTM();
+      const brideMatrix = brideFrame.getScreenCTM();
+      if (!groomMatrix || !brideMatrix) return;
+      // The two drawing origins sit on the outer strokes of the arched frames.
+      const left = new DOMPoint(5, 175).matrixTransform(groomMatrix);
+      const right = new DOMPoint(395, 175).matrixTransform(brideMatrix);
+      const bounds = grid.getBoundingClientRect();
+      const height = Math.min(groom.clientHeight, bride.clientHeight);
+      svg.style.left = `${left.x - bounds.left}px`;
+      svg.style.top = `${(left.y + right.y) / 2 - bounds.top - height * .36}px`;
+      svg.style.width = `${right.x - left.x}px`;
+      svg.style.height = `${height}px`;
+    }
+    const observer = new ResizeObserver(fitHeartToFrames);
+    [grid, groom, bride].forEach(element => observer.observe(element));
+    svg.addEventListener("animationstart", fitHeartToFrames);
+    fitHeartToFrames();
+    return () => {
+      observer.disconnect();
+      svg.removeEventListener("animationstart", fitHeartToFrames);
+    };
+  }, [reducedMotion]);
 
   useEffect(() => {
     const photos = buttons.current;
@@ -68,17 +100,18 @@ export function Portraits({ people }: { people: readonly [Person, Person] }) {
   }, []);
 
   return <div className="portrait-grid">
+    <svg ref={connection} className="portrait-connection" data-ambient="" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <path pathLength="1" d="M0 36C0 -2 32 -13 50 25" />
+      <path pathLength="1" d="M100 36C100 -2 68 -13 50 25" />
+      <path pathLength="1" d="M0 36C0 61 27 80 50 99" />
+      <path pathLength="1" d="M100 36C100 61 73 80 50 99" />
+    </svg>
     {people.map((person, index) => {
       const { photo } = person;
       const active = source === index;
       const receivesHeart = source === 1 - index;
-      return <Fragment key={person.role}>
-        {index === 1 && <svg className="portrait-connection" viewBox="0 0 160 44" fill="none" aria-hidden="true">
-          <path className="portrait-light-line" pathLength="1" d="M2 22C30 22 43 10 60 15c9 2 14 7 20 7s11-5 20-7c17-5 30 7 58 7" />
-          <path className="portrait-light-jewel" d="M80 13 89 22 80 31 71 22Z" />
-          <path className="portrait-light-jewel" d="M80 18 84 22 80 26 76 22Z" />
-        </svg>}
-        <article className="portrait" data-portrait={index === 0 ? "left" : "right"}>
+      return (
+        <article key={person.role} className="portrait" data-portrait={index === 0 ? "left" : "right"}>
           <div
             className="portrait-entry"
             data-ambient=""
@@ -116,7 +149,7 @@ export function Portraits({ people }: { people: readonly [Person, Person] }) {
                 }}
                 style={{ "--focal": photo.focal, "--mobile-focal": photo.mobileFocal } as CSSProperties}
               >
-                <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 600px) 80vw, 400px" />
+                <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 850px) 47vw, 400px" />
                 <motion.span
                   className="heart-overlay"
                   aria-hidden="true"
@@ -144,7 +177,7 @@ export function Portraits({ people }: { people: readonly [Person, Person] }) {
             <p>মাতা · {person.mother.bn}</p>
           </div>
         </article>
-      </Fragment>;
+      );
     })}
   </div>;
 }

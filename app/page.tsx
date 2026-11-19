@@ -7,7 +7,7 @@ import { Cinema } from "./cinema";
 import { Countdown } from "./countdown";
 import { WeddingEntrance } from "./entrance";
 import { CopyAddress, Portraits } from "./interactions";
-import { MusicToggle } from "./music";
+import { MusicProvider, MusicToggle } from "./music";
 import { EventTimepiece } from "./event-timepiece";
 import { bnNumber, ceremony, eventDate, month, timepieceReadings, wedding, weddingDates } from "./wedding";
 
@@ -26,7 +26,7 @@ export default function Home() {
   const cover = wedding.photos.cover;
   const theme = Object.fromEntries(Object.entries(wedding.theme).map(([name, value]) => [`--${name}`, value]));
 
-  return <WeddingEntrance title={wedding.title} style={theme as CSSProperties}>
+  return <MusicProvider><WeddingEntrance title={wedding.title} style={theme as CSSProperties}>
     <a className="skip-link" href="#invitation">মূল আমন্ত্রণে যান</a>
     <header className="header" id="top">
       <nav className="nav wrap" aria-label="আমন্ত্রণপত্র">
@@ -180,5 +180,5 @@ export default function Home() {
     </footer>
     <Cinema intensity={wedding.motion} />
     <Ambience />
-  </WeddingEntrance>;
+  </WeddingEntrance></MusicProvider>;
 }

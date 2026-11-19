@@ -110,5 +110,11 @@
   .wedding-diya { grid-column: 3; justify-self: end; }
 }
 @media (max-width: 600px) {
-  .turmeric-lights i:nth-child(n+9) { display: none; }
+  .toran-leaf:nth-child(odd) .toran-blade { animation-duration: 9s; }
+  .toran-leaf:nth-child(even) .toran-blade { animation: none; }
+  .plant-blade { animation-duration: 10s; }
+  .plant-blade:nth-child(2n) { animation-duration: 11.5s; }
+  .turmeric-lights i { animation-duration: 11s; }
+  .turmeric-lights i:nth-child(n+6) { display: none; }
+  .wedding-diya::before, .wedding-diya .diya-flame { animation-duration: 5.2s; }
 }
