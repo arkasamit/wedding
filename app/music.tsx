@@ -1,9 +1,21 @@
 "use client";
 
 import { Music2, Pause } from "lucide-react";
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
-type MusicControls = { playing: boolean; failed: boolean; toggle: () => void; openInvitation: (withSound: boolean) => void };
+type MusicControls = {
+  playing: boolean;
+  failed: boolean;
+  toggle: () => void;
+  openInvitation: (withSound: boolean) => void;
+};
 const MusicContext = createContext<MusicControls | null>(null);
 
 export function useWeddingMusic() {
@@ -45,46 +57,61 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     setFailed(false);
     if (track.error) track.load();
     void track.play().catch((error: unknown) => {
-      if (!(error instanceof DOMException && error.name === "AbortError")) reportError();
+      if (!(error instanceof DOMException && error.name === "AbortError"))
+        reportError();
     });
   }
 
-  return <MusicContext.Provider value={{
-    playing, failed,
-    toggle: () => setPlayback(audio.current?.paused ?? true),
-    openInvitation: withSound => setPlayback(withSound && !mutedByGuest.current),
-  }}>
-    <audio
-      ref={audio}
-      src="/atlasaudio-piano-classical-631938.mp3"
-      autoPlay
-      hidden
-      loop
-      onPlaying={() => setPlaying(true)}
-      onPause={() => setPlaying(false)}
-      onError={reportError}
-    />
-    {children}
-  </MusicContext.Provider>;
+  return (
+    <MusicContext.Provider
+      value={{
+        playing,
+        failed,
+        toggle: () => setPlayback(audio.current?.paused ?? true),
+        openInvitation: (withSound) =>
+          setPlayback(withSound && !mutedByGuest.current),
+      }}
+    >
+      <audio
+        ref={audio}
+        src="/atlasaudio-piano-classical-631938.mp3"
+        autoPlay={false}
+        hidden
+        loop
+        onPlaying={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onError={reportError}
+      />
+      {children}
+    </MusicContext.Provider>
+  );
 }
 
 export function MusicToggle() {
   const { playing, failed, toggle } = useWeddingMusic();
-  return <div className="music-control">
-    <button
-      className="music-button"
-      type="button"
-      aria-label="আমন্ত্রণের সংগীত"
-      aria-pressed={playing}
-      onClick={toggle}
-    >
-      {playing ? <Pause size={18} aria-hidden="true" /> : <Music2 size={18} aria-hidden="true" />}
-    </button>
-    {!failed && <span className="music-tooltip" aria-hidden="true">
-      {playing ? "সংগীত থামান" : "সংগীত চালু করুন"}
-    </span>}
-    <span className="music-status" role="status">
-      {failed ? "সংগীত চালু করা যায়নি। আবার চেষ্টা করুন।" : ""}
-    </span>
-  </div>;
+  return (
+    <div className="music-control">
+      <button
+        className="music-button"
+        type="button"
+        aria-label="আমন্ত্রণের সংগীত"
+        aria-pressed={playing}
+        onClick={toggle}
+      >
+        {playing ? (
+          <Pause size={18} aria-hidden="true" />
+        ) : (
+          <Music2 size={18} aria-hidden="true" />
+        )}
+      </button>
+      {!failed && (
+        <span className="music-tooltip" aria-hidden="true">
+          {playing ? "সংগীত থামান" : "সংগীত চালু করুন"}
+        </span>
+      )}
+      <span className="music-status" role="status">
+        {failed ? "সংগীত চালু করা যায়নি। আবার চেষ্টা করুন।" : ""}
+      </span>
+    </div>
+  );
 }
