@@ -1,0 +1,255 @@
+html:has(.entry-shell:not([data-stage="open"])) { overflow: hidden; overscroll-behavior: none; }
+.entry-shell[data-stage="ready"] .entry-content { visibility: hidden; }
+.entry-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  isolation: isolate;
+  overflow: clip;
+  color: var(--paper);
+}
+.entry-shell:not([data-stage="opening"]) .entry-screen { background: var(--ink); }
+.entrance-doors, .entry-surround { position: absolute; inset: 0; pointer-events: none; }
+.entrance-doors { display: flex; }
+.door-leaf {
+  flex: 1 1 50%;
+  min-width: 0;
+  position: relative;
+  color: var(--gold);
+  background: var(--wine) url("./jamdani.svg") center / 112px;
+  border: 1px solid var(--gold);
+  box-shadow: inset 0 0 4rem var(--ink), inset 0 0 0 9px var(--ink);
+  transition: transform 1.02s var(--ease-glide);
+}
+.door-leaf::before, .door-leaf::after {
+  content: "";
+  position: absolute;
+  inset: 13% 9% 9%;
+  border: 2px solid var(--gold);
+  border-radius: 52% 52% 3px 3px / 32% 32% 3px 3px;
+  box-shadow: 0 0 0 5px var(--wine), 0 0 0 6px var(--gold);
+}
+.door-leaf::after { inset: 15% 11% 11%; border-width: 1px; box-shadow: none; opacity: .72; }
+.door-leaf .door-engraving {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  width: min(64%, 20rem);
+  translate: -50% 0;
+  opacity: .36;
+}
+.door-leaf > svg:not(.door-engraving) {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  translate: -50% 0;
+  width: min(34%, 8rem);
+  opacity: .82;
+}
+.door-leaf > span {
+  position: absolute; top: 60%; width: 14px; height: 24px;
+  border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 0 4px var(--crimson);
+}
+.door-left > span { right: 9%; }
+.door-right > span { left: 9%; }
+.entry-surround {
+  inset: .9rem;
+  border: 1px solid var(--gold);
+  outline: 1px solid var(--gold);
+  outline-offset: 4px;
+  transition: opacity .72s var(--ease-settle);
+}
+.entry-surround::before, .entry-surround::after {
+  content: "";
+  position: absolute;
+  inset: 0 10px;
+  border-inline: 1px solid color-mix(in srgb, var(--gold) 58%, transparent);
+}
+.entry-surround::after { inset: 10px 0; border: 0; border-block: 1px solid color-mix(in srgb, var(--gold) 58%, transparent); }
+.entry-surround .toran { z-index: 1; top: -.55rem; height: 76px; }
+.entry-crest {
+  position: absolute; top: 4rem; left: 50%; translate: -50% 0;
+  width: 5.2rem; color: var(--gold);
+}
+.entry-shell[data-stage="opening"] .door-left { transform: translateX(-102%); }
+.entry-shell[data-stage="opening"] .door-right { transform: translateX(102%); }
+.entry-shell[data-stage="opening"] .entry-surround { opacity: 0; }
+.entrance-actions {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: safe center;
+  justify-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  gap: .62rem;
+  padding: 1.65rem 1.7rem;
+  text-align: center;
+  color: var(--paper);
+}
+.entry-identity { padding: .55rem .9rem; width: min(100%, 27rem); border-block: 1px solid var(--gold); background: var(--wine); }
+.entry-identity p { color: var(--gold); font-size: 1.42rem; font-weight: 600; }
+.entry-identity h1 { color: var(--paper); font-size: 4.2rem; line-height: 1.32; margin-top: .20rem; }
+.hero-image-frame { overflow: hidden; border-radius: inherit; }
+.entry-shell:is([data-stage="opening"], [data-stage="open"]) .hero-photo {
+  animation: royal-portrait 1.64s var(--ease-settle) both var(--ambient-state);
+}
+@keyframes royal-portrait { from { transform: translateY(6px); } }
+.entrance-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 5.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--wine);
+  outline: 1px solid var(--gold);
+  outline-offset: -5px;
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 0 3px var(--crimson);
+}
+.entrance-seal::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 1px dashed var(--gold);
+  animation: ceremony-seal 4s linear 1;
+}
+.seal-pot { width: 47%; color: var(--paper); animation: ceremony-pot 1.65s ease-in-out 2; }
+.seal-lotus {
+  position: absolute; bottom: 3px; color: var(--gold); width: 64%; background: var(--wine);
+  transform-origin: 50% 85%; animation: ceremony-bloom 1.16s var(--ease-settle) both;
+}
+.entrance-open, .entrance-muted {
+  display: inline-flex; align-items: center; justify-content: center; gap: .42rem;
+  min-height: 44px; padding: .32rem .9rem; border-radius: 4px; cursor: pointer;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+.entrance-open { margin-top: .35rem; color: var(--ink); border: 1px solid var(--gold); background: var(--paper); }
+.entrance-open:hover { background: var(--gold); }
+.entrance-muted { color: var(--paper); border: 1px solid var(--gold); background: var(--wine); font-size: .88rem; }
+.entrance-muted:hover { background: var(--crimson); }
+.entrance-actions :focus-visible { outline-color: var(--paper); outline-offset: 3px; }
+.intro-petals { position: absolute; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; }
+.intro-petals i {
+  position: absolute; top: -1rem; left: var(--petal-x);
+  width: 8px; height: 13px; opacity: 0;
+}
+.entry-shell:is([data-stage="opening"], [data-stage="open"]) .intro-petals i {
+  animation: ceremony-petal 4.1s var(--petal-delay) ease-in-out both;
+  animation-play-state: var(--ambient-state);
+}
+@keyframes ceremony-seal { to { rotate: 110deg; } }
+@keyframes ceremony-pot { 50% { transform: translateY(-3px); } }
+@keyframes ceremony-bloom { from { transform: scale(.74); opacity: .68; } }
+@keyframes ceremony-petal {
+  0% { transform: translate(0, 0) rotate(-30deg); opacity: 0; }
+  21%, 65% { opacity: .76; }
+  48% { transform: translate(calc(var(--petal-drift) * -.32), 37vh) rotate(70deg); }
+  100% { transform: translate(var(--petal-drift), 78vh) rotate(241deg); opacity: 0; }
+}
+
+.hero-countdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-areas: "heading timer" "date timer";
+  align-items: center;
+  gap: .16rem .85rem;
+  width: min(100%, 39rem);
+  margin: 0 auto 1.2rem;
+  padding: .52rem .8rem;
+  border: 1px solid var(--gold);
+  box-shadow: inset 0 0 0 2px var(--wine), inset 0 0 0 3px color-mix(in srgb, var(--gold) 45%, transparent);
+  background: var(--wine);
+  color: var(--paper);
+  text-align: start;
+}
+.hero-countdown h2 {
+  grid-area: heading;
+  align-self: end;
+  color: var(--paper);
+  font: 650 1.05rem / 1.45 var(--font-bengali-sans), "Nirmala UI", sans-serif;
+}
+.countdown-date {
+  grid-area: date;
+  align-self: start;
+  color: var(--gold);
+  font-size: .875rem;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.countdown-time {
+  grid-area: timer;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  text-align: center;
+}
+.countdown-time > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  min-width: 0;
+  min-height: 3.25rem;
+  padding: .12rem .16rem;
+}
+.countdown-time > div + div { border-inline-start: 1px solid color-mix(in srgb, var(--gold) 62%, transparent); }
+.countdown-time dd { color: var(--paper); font-size: 1.56rem; font-weight: 650; line-height: 1.24; font-variant-numeric: tabular-nums; }
+.countdown-time dt { color: var(--gold); font-size: .875rem; }
+.countdown-finished { grid-area: timer; text-align: center; color: var(--paper); font-size: 1rem; }
+
+.event-invitation { border-top: 1px solid color-mix(in srgb, var(--wine) 42%, transparent); margin-top: .8rem; padding-top: .7rem; }
+
+.footer-seal { translate: -50% var(--scene-drift, 0px); }
+.closing-card {
+  position: relative; width: min(calc(100% - 2.5rem), 46rem);
+  padding: 1.3rem 1rem 1.5rem;
+  background: var(--wine); border: 1px solid var(--gold);
+}
+.closing-card::after {
+  content: ""; position: absolute; inset: 5px;
+  border-block: 1px solid var(--gold); pointer-events: none; transform: scaleX(var(--closing-ink, 1));
+}
+.closing-lotus { width: 4.2rem; margin: 0 auto .1rem; color: var(--gold); }
+.closing-card h2 { color: var(--paper); font-size: 2rem; margin-bottom: .35rem; }
+.closing-card .lamp { width: 3.65rem; }
+
+@media (max-width: 600px) {
+  .entry-identity p { font-size: 1.22rem; }
+  .entry-surround { inset: .55rem; }
+  .entry-surround .toran { height: 46px; top: -.15rem; }
+  .entry-crest { top: 3.25rem; width: 3.35rem; }
+  .entry-identity h1 { font-size: 2.95rem; }
+  .entrance-seal { width: 4.4rem; }
+  .seal-lotus { bottom: 1px; }
+  .entrance-actions { gap: .5rem; }
+  .entrance-open { margin-top: .25rem; font-size: .96rem; }
+  .intro-petals i:nth-child(n+9) { display: none; }
+  .hero-countdown {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "heading" "date" "timer";
+    gap: .2rem;
+    padding: .45rem .45rem .38rem;
+    margin-bottom: .82rem;
+    text-align: center;
+  }
+  .countdown-time { margin-top: .22rem; }
+  .countdown-time > div { min-height: 2.95rem; }
+  .countdown-time dd { font-size: 1.46rem; }
+  .closing-card h2 { font-size: 1.8rem; }
+}
+@media (max-width: 360px) {
+  .entry-identity h1 { font-size: 2.55rem; }
+  .nav-links { column-gap: .4rem; row-gap: 0; }
+  .nav-links a { font-size: .86rem; }
+}
+@media (max-height: 440px) {
+  .entrance-actions { gap: .3rem; padding-block: 1rem; }
+  .entrance-seal { width: 3.45rem; }
+  .entry-identity h1 { font-size: 2.45rem; }
+  .entry-crest { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-petals { display: none; }
+}

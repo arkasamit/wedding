@@ -1,0 +1,142 @@
+.portrait-grid { position: relative; isolation: isolate; container-type: inline-size; }
+.portrait-entry {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  width: min(100%, 24rem);
+  margin-inline: auto;
+}
+.portrait-plane { position: relative; z-index: 1; }
+.portrait-mandala {
+  position: absolute;
+  width: 86%;
+  height: auto;
+  top: 8%;
+  color: var(--gold);
+  opacity: .58;
+  pointer-events: none;
+}
+[data-portrait="left"] { --portrait-slide: -48px; --portrait-delay: 0s; }
+[data-portrait="right"] { --portrait-slide: 48px; --portrait-delay: .12s; }
+[data-portrait="left"] .portrait-mandala { left: -27%; }
+[data-portrait="right"] .portrait-mandala { right: -27%; }
+.portrait-entry.is-portrait-arriving {
+  animation: portrait-arrival 1.24s var(--portrait-delay) var(--ease-settle) both;
+}
+.is-portrait-arriving .portrait-mandala {
+  animation: portrait-mandala-spin 4.85s calc(.12s + var(--portrait-delay)) ease-in-out both;
+  animation-play-state: var(--ambient-state);
+}
+@keyframes portrait-arrival { from { transform: translate3d(var(--portrait-slide), 6px, 0); } }
+@keyframes portrait-mandala-spin { from { rotate: -20deg; } to { rotate: 58deg; } }
+
+.portrait-frame {
+  position: absolute;
+  inset: -7px;
+  width: calc(100% + 14px);
+  height: calc(100% + 14px);
+  color: var(--gold);
+  pointer-events: none;
+}
+.portrait-frame path, .portrait-name-flourish path, .portrait-light-line {
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.portrait-frame path { stroke-width: 1.7; vector-effect: non-scaling-stroke; }
+.portrait-frame path:nth-child(2) { stroke-width: .74; opacity: .78; }
+.is-portrait-arriving .portrait-frame path { animation: portrait-gold-draw 1.7s calc(.19s + var(--portrait-delay)) var(--ease-glide) both; }
+.is-portrait-arriving .portrait-frame path:nth-child(2) { animation-delay: calc(.37s + var(--portrait-delay)); }
+@keyframes portrait-gold-draw { from { stroke-dashoffset: 1; } }
+
+.portrait-connection {
+  position: absolute;
+  z-index: 0;
+  top: calc(min(24rem, (100cqw - var(--portrait-gap)) / 2) * .605);
+  left: 50%;
+  translate: -50% -50%;
+  width: calc(var(--portrait-gap) + 1.95rem);
+  height: auto;
+  color: var(--gold);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--gold) 70%, transparent));
+  pointer-events: none;
+}
+.portrait-light-line { stroke-width: 2.3; }
+.portrait-light-jewel { stroke: currentColor; stroke-width: 1.3; fill: var(--paper); }
+.portrait-connection.is-connection-drawn .portrait-light-line { animation: portrait-gold-draw 1.38s .26s var(--ease-glide) both; }
+.portrait-connection.is-connection-drawn .portrait-light-jewel { animation: portrait-jewel .92s .87s var(--ease-settle) both; }
+@keyframes portrait-jewel { from { opacity: 0; } }
+
+.portrait-copy { font-size: clamp(1.13rem, 1rem + .55vw, 1.36rem); }
+.portrait-copy .kicker { font-size: clamp(1.15rem, 1rem + .45vw, 1.34rem); }
+.portrait-copy h3 { display: grid; justify-items: center; font-size: clamp(2.15rem, 1.65rem + 1.55vw, 3.15rem); }
+.portrait-ink-name { display: inline-block; max-width: 100%; }
+.portrait-name-flourish {
+  width: min(8rem, 58%);
+  height: .64rem;
+  margin-top: .05rem;
+  color: var(--gold);
+}
+.portrait-name-flourish path { stroke-width: 1.6; }
+.is-portrait-named .portrait-ink-name {
+  animation: portrait-write 1.22s var(--portrait-delay) var(--ease-settle) backwards;
+}
+.is-portrait-named .portrait-name-flourish path { animation: portrait-gold-draw 1.18s calc(.63s + var(--portrait-delay)) var(--ease-settle) both; }
+@keyframes portrait-write {
+  from { clip-path: inset(-18% 100% -18% 0); }
+  to { clip-path: inset(-18% 0 -18% 0); }
+}
+
+.portrait-petals { position: absolute; z-index: 0; inset: -1.1rem -1.65rem 0; overflow: hidden; pointer-events: none; }
+.portrait-petals i {
+  position: absolute;
+  top: -15px;
+  left: var(--portrait-petal-x);
+  width: 8px;
+  height: 14px;
+  opacity: 0;
+}
+.is-portrait-arriving .portrait-petals i {
+  animation: portrait-petal-fall 3.75s calc(.35s + var(--portrait-petal-delay)) ease-in-out both;
+  animation-play-state: var(--ambient-state);
+}
+@keyframes portrait-petal-fall {
+  17%, 61% { opacity: .52; }
+  100% { opacity: 0; transform: translate(var(--portrait-petal-drift), min(30rem, 57vh)) rotate(180deg); }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .portrait-plane {
+    transform-style: preserve-3d;
+    transform: perspective(860px) rotateX(var(--portrait-tilt-x, 0deg)) rotateY(var(--portrait-tilt-y, 0deg));
+    transition: transform .32s var(--ease-settle);
+  }
+  .portrait-frame { transform: translateZ(6px); }
+}
+
+@media (min-width: 850px) {
+  .couple .section-heading h2 { font-size: 3.1rem; }
+}
+
+@media (max-width: 600px) {
+  [data-portrait="left"] { --portrait-slide: -22px; }
+  [data-portrait="right"] { --portrait-slide: 22px; }
+  .portrait-entry { width: min(82%, 19rem); }
+  .portrait-mandala { width: 74%; }
+  [data-portrait="left"] .portrait-mandala { left: -22%; }
+  [data-portrait="right"] .portrait-mandala { right: -22%; }
+  .portrait-connection {
+    position: static;
+    justify-self: center;
+    translate: none;
+    rotate: 90deg;
+    width: 3.45rem;
+    height: 1rem;
+  }
+  .portrait-petals i:nth-child(n+6) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait-petals { display: none; }
+}

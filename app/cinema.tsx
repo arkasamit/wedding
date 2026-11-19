@@ -1,0 +1,131 @@
+"use client";
+
+import { useContext, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { EntranceOpened } from "./entrance-state";
+
+const revealRatio = 0.23;
+
+export function Cinema({ intensity }: { intensity: number }) {
+  const opened = useContext(EntranceOpened);
+  useEffect(() => {
+    if (!opened || intensity <= 0 || !("IntersectionObserver" in window)) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const media = gsap.matchMedia();
+    media.add({
+      motion: "(prefers-reduced-motion: no-preference)",
+      desktop: "(min-width: 900px) and (pointer: fine)",
+    }, ({ conditions }) => {
+      if (!conditions?.motion) return;
+      const pending = new Map<Element, { reveal: () => void; image?: HTMLImageElement }>();
+      const inView = new Set<Element>();
+      const cleanups: (() => void)[] = [];
+      const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.intersectionRatio >= revealRatio) {
+            inView.add(entry.target);
+            reveal(entry.target);
+          } else {
+            inView.delete(entry.target);
+          }
+        }
+      }, { threshold: revealRatio, rootMargin: "0px 0px -3% 0px" });
+
+      function reveal(target: Element) {
+        const effect = pending.get(target);
+        if (!effect || !inView.has(target) || effect.image?.complete === false) return;
+        pending.delete(target);
+        inView.delete(target);
+        observer.unobserve(target);
+        effect.reveal();
+      }
+
+      function watch(target: Element, run: () => void, image?: HTMLImageElement) {
+        pending.set(target, { reveal: run, image });
+        observer.observe(target);
+        if (image && !image.complete) {
+          const ready = () => reveal(target);
+          image.addEventListener("load", ready, { once: true });
+          image.addEventListener("error", ready, { once: true });
+          cleanups.push(() => {
+            image.removeEventListener("load", ready);
+            image.removeEventListener("error", ready);
+          });
+        }
+      }
+
+      function animateClass(target: Element, name: string, image?: HTMLImageElement) {
+        watch(target, () => target.classList.add(name), image);
+        cleanups.push(() => target.classList.remove(name));
+      }
+
+      if (conditions.desktop) {
+        const distance = intensity * 26;
+        for (const scene of document.querySelectorAll("[data-scene]")) {
+          const artwork = scene.querySelectorAll(".sprig, .couple-seal, .scene-art");
+          if (!artwork.length) continue;
+          gsap.fromTo(artwork, { "--scene-drift": `${distance}px` }, {
+            "--scene-drift": `${-distance}px`, ease: "none",
+            scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: 1 },
+          });
+        }
+      }
+
+      for (const entry of document.querySelectorAll(".portrait-entry")) {
+        animateClass(entry, "is-portrait-arriving", entry.querySelector("img") ?? undefined);
+      }
+      for (const copy of document.querySelectorAll(".portrait-copy")) {
+        animateClass(copy, "is-portrait-named");
+      }
+      const connection = document.querySelector(".portrait-connection");
+      if (connection) animateClass(connection, "is-connection-drawn");
+
+      for (const linework of document.querySelectorAll(".ink-reveal")) {
+        const ink = gsap.fromTo(linework.querySelectorAll("[data-ink]"),
+          { strokeDasharray: 1, strokeDashoffset: 1 },
+          { strokeDashoffset: 0, duration: 1.42, stagger: 0.03, ease: "sine.inOut", paused: true });
+        watch(linework, () => ink.play());
+      }
+
+      for (const panel of document.querySelectorAll(".event-panel")) {
+        const copy = panel.querySelector(".event-copy");
+        if (!copy) continue;
+        const x = conditions.desktop ? (panel.classList.contains("haldi") ? 18 : -18) : 0;
+        const act = gsap.timeline({ paused: true, defaults: { ease: "sine.out" } })
+          .from(copy, { x, y: x ? 0 : 8, opacity: 0.9, duration: 1, clearProps: "transform,opacity" })
+          .fromTo(copy, { "--act-rule": 0 }, { "--act-rule": 1, duration: 1.05 }, 0.13)
+          .from(copy.children, { y: 6, stagger: 0.075, duration: 0.63, clearProps: "transform" }, 0.18);
+        watch(copy, () => {
+          panel.classList.add("is-staged");
+          act.play();
+        });
+        cleanups.push(() => panel.classList.remove("is-staged"));
+      }
+
+      const finale = document.querySelector(".grand-finale");
+      const closing = finale?.querySelector(".closing-card");
+      if (finale && closing) {
+        const finish = gsap.timeline({ paused: true })
+          .fromTo(closing, { "--closing-ink": 0 }, { "--closing-ink": 1, duration: 1.42, ease: "sine.inOut" })
+          .from(closing.querySelectorAll(".closing-lotus, .lamp"), {
+            y: 7, scale: 0.9, opacity: 0.78, stagger: 0.14, duration: 1.25, ease: "sine.out",
+            clearProps: "transform,opacity",
+          }, 0);
+        watch(closing, () => {
+          finale.classList.add("is-finale");
+          finish.play();
+        });
+        cleanups.push(() => finale.classList.remove("is-finale"));
+      }
+
+      return () => {
+        observer.disconnect();
+        for (const clean of cleanups) clean();
+      };
+    });
+    return () => media.revert();
+  }, [intensity, opened]);
+
+  return null;
+}
