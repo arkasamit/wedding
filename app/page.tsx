@@ -20,6 +20,7 @@ const turmericLights = [
   [4, 18], [95, 23], [11, 43], [89, 54], [27, 87], [70, 84],
   [20, 10], [75, 9], [43, 66], [58, 34], [32, 21], [83, 81],
 ];
+const finalePetals = [3, 95, 9, 89, 16, 82, 24, 74, 34, 64, 44, 54];
 
 export default function Home() {
   const cover = wedding.photos.cover;
@@ -152,9 +153,9 @@ export default function Home() {
       <Alpana className="footer-seal scene-art" />
       <div className="finale-light" aria-hidden="true" />
       <div className="finale-petals marigold-rain" aria-hidden="true">
-        {Array.from({ length: 12 }, (_, index) => <i key={index} style={{
-          "--petal-x": `${5 + index * 8}%`, "--petal-delay": `${(index % 5) * 115}ms`,
-          "--petal-drift": `${index % 2 ? -36 : 36}px`,
+        {finalePetals.map((x, index) => <i key={x} style={{
+          "--petal-x": `${x}%`, "--petal-delay": `${(index % 5) * 115}ms`,
+          "--petal-drift": `${index % 2 ? -20 : 20}px`,
         } as CSSProperties} />)}
       </div>
       <div className="wrap closing-card">
@@ -164,6 +165,18 @@ export default function Home() {
         <p>{wedding.blessing}</p>
         <p className="signature">{wedding.hosts}</p>
       </div>
+      <section className="wrap reception-card" aria-labelledby="reception-heading">
+        <div>
+          <h2 id="reception-heading">অভ্যর্থনায়</h2>
+          <p className="reception-names">{wedding.reception.greeters}</p>
+        </div>
+        <div className="reception-contact">
+          <h3>প্রয়োজনে যোগাযোগ</h3>
+          <ul className="reception-phones">
+            {wedding.reception.phones.map(({ label, href }) => <li key={href}><a href={href}>{label}</a></li>)}
+          </ul>
+        </div>
+      </section>
     </footer>
     <Cinema intensity={wedding.motion} />
     <Ambience />

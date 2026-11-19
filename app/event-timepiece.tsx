@@ -45,12 +45,12 @@ export function EventTimepiece({ readings }: { readings: readonly TimepieceReadi
         setEntered(true);
         observer.disconnect();
       }
-    }, { threshold: 0.26, rootMargin: "0px 0px -3% 0px" });
+    }, { threshold: 0.26, rootMargin: "0px 0px -12px 0px" });
     observer.observe(node);
     return () => observer.disconnect();
   }, [opened]);
 
-  return <div className="event-timepiece" data-animate={entered} ref={element}>
+  return <div className="event-timepiece" data-ambient="" data-animate={entered || selection.previous !== null} ref={element}>
     <div className="timepiece-display">
       <div className="event-calendar">
         <div className="event-calendar-month">{reading.monthLabel}</div>

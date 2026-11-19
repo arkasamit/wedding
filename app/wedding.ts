@@ -33,6 +33,7 @@ type Wedding = {
   invitation: string;
   blessing: string;
   hosts: string;
+  reception: { greeters: string; phones: readonly { label: string; href: string }[] };
   year: number | null;
   month: number;
   timeZone: "Asia/Dhaka";
@@ -57,15 +58,22 @@ function momentTime({ hour, minute }: Moment) {
 }
 
 export const wedding: Wedding = {
-  title: "অর্ক ও পৃথা",
+  title: "অর্ক ও শরণ",
   invitation: "দুই হৃদয়ের মিলনে, দুই পরিবারের আনন্দে—আমাদের শুভ পরিণয়ে আপনাদের সস্নেহ উপস্থিতি ও আশীর্বাদ একান্ত কাম্য।",
   blessing: "আপনাদের উপস্থিতি ও আশীর্বাদে আমাদের এই শুভক্ষণ আরও আনন্দময় হয়ে উঠুক।",
-  hosts: "শুদ্ধ, চর্যা ও অর্জন",
+  hosts: "বিষ্ণুপদ মজুমদার ও চিত্রা মজুমদার",
+  reception: {
+    greeters: "চর্যা, শুদ্ধ ও অর্জন",
+    phones: [
+      { label: "01916-313022", href: "tel:+8801916313022" },
+      { label: "01828049230", href: "tel:+8801828049230" },
+    ],
+  },
   year: 2026,
   month: 12,
   timeZone: "Asia/Dhaka",
   photos: {
-    cover: { src: cover, alt: "বিয়ের অলংকরণে ঘেরা অর্ক ও পৃথার তিনটি যুগল ছবি", focal: "50% 50%", mobileFocal: "50% 50%" },
+    cover: { src: cover, alt: "বিয়ের অলংকরণে ঘেরা অর্ক ও শরণের তিনটি যুগল ছবি", focal: "50% 50%", mobileFocal: "50% 50%" },
   },
   people: [
     {
@@ -80,7 +88,7 @@ export const wedding: Wedding = {
       name: { bn: "শরণ মজুমদার পৃথা", en: "Sharan Majumdar Pritha" },
       father: { bn: "বিষ্ণুপদ মজুমদার", en: "Bishnu Pada Majumdar" },
       mother: { bn: "মিনতি মজুমদার চিত্রা", en: "Minoti Majumdar Chitra" },
-      photo: { src: bride, alt: "পৃথা মজুমদারের প্রতিকৃতি", focal: "50% 24%", mobileFocal: "50% 22%" },
+      photo: { src: bride, alt: "শরণ মজুমদার পৃথার প্রতিকৃতি", focal: "50% 24%", mobileFocal: "50% 22%" },
     },
   ],
   events: [
@@ -92,6 +100,7 @@ export const wedding: Wedding = {
     {
       title: "শুভ বিবাহ", day: lagnaStart.day, weekday: "রবিবার", moments: [lagnaStart, lagnaEnd],
       details: [
+        { label: "প্রীতিভোজ", value: "দুপুর ১টা ৩০ মিনিট" },
         { label: "বরযাত্রার আগমন", value: "সন্ধ্যা ৭টা" },
         { label: "বিবাহের লগ্ন", value: `${momentTime(lagnaStart)} মিনিট থেকে মধ্যরাত পেরিয়ে ${momentTime(lagnaEnd)} মিনিট পর্যন্ত।` },
       ],

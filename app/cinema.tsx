@@ -16,6 +16,7 @@ export function Cinema({ intensity }: { intensity: number }) {
     media.add({
       motion: "(prefers-reduced-motion: no-preference)",
       desktop: "(min-width: 900px) and (pointer: fine)",
+      touch: "(pointer: coarse)",
     }, ({ conditions }) => {
       if (!conditions?.motion) return;
       const pending = new Map<Element, { reveal: () => void; image?: HTMLImageElement }>();
@@ -30,7 +31,7 @@ export function Cinema({ intensity }: { intensity: number }) {
             inView.delete(entry.target);
           }
         }
-      }, { threshold: revealRatio, rootMargin: "0px 0px -3% 0px" });
+      }, { threshold: revealRatio, rootMargin: "0px 0px -12px 0px" });
 
       function reveal(target: Element) {
         const effect = pending.get(target);
@@ -60,16 +61,22 @@ export function Cinema({ intensity }: { intensity: number }) {
         cleanups.push(() => target.classList.remove(name));
       }
 
-      if (conditions.desktop) {
-        const distance = intensity * 26;
-        for (const scene of document.querySelectorAll("[data-scene]")) {
-          const artwork = scene.querySelectorAll(".sprig, .couple-seal, .scene-art");
-          if (!artwork.length) continue;
-          gsap.fromTo(artwork, { "--scene-drift": `${distance}px` }, {
-            "--scene-drift": `${-distance}px`, ease: "none",
-            scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: 1 },
-          });
-        }
+      const distance = intensity * (conditions.desktop ? 26 : 8);
+      for (const scene of document.querySelectorAll("[data-scene]")) {
+        const artwork = scene.querySelectorAll(".sprig, .couple-seal, .scene-art");
+        if (!artwork.length) continue;
+        gsap.fromTo(artwork, { "--scene-drift": `${distance}px` }, {
+          "--scene-drift": `${-distance}px`, ease: "none",
+          scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: conditions.desktop ? 1 : 0.35 },
+        });
+      }
+
+      const cover = conditions.touch ? document.querySelector(".hero-photo") : null;
+      if (cover) {
+        gsap.fromTo(cover, { "--cover-scroll": "-2.5px" }, {
+          "--cover-scroll": "2.5px", ease: "none",
+          scrollTrigger: { trigger: cover, start: "top bottom", end: "bottom top", scrub: 0.35 },
+        });
       }
 
       for (const entry of document.querySelectorAll(".portrait-entry")) {

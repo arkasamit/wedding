@@ -107,8 +107,8 @@
   font-weight: 650;
   line-height: 1.5;
 }
-.event-timepiece[data-animate="true"] .watch-hand { animation: event-hand-sweep 1.7s var(--ease-glide); }
-.event-timepiece[data-animate="true"] .calendar-leaf { animation: calendar-slide .78s var(--ease-settle); }
+.event-timepiece[data-animate="true"] .watch-hand { animation: event-hand-sweep 1.7s var(--ease-glide) var(--ambient-state); }
+.event-timepiece[data-animate="true"] .calendar-leaf { animation: calendar-slide .78s var(--ease-settle) var(--ambient-state); }
 @keyframes event-hand-sweep {
   from { transform: rotate(var(--hand-from)); }
   to { transform: rotate(var(--hand-end)); }
@@ -181,18 +181,20 @@
 .is-finale .finale-petals i { animation: finale-petal 3.15s var(--petal-delay) ease-in-out both var(--ambient-state); }
 @keyframes finale-petal {
   17%, 62% { opacity: .64; }
-  100% { opacity: 0; transform: translate(var(--petal-drift), 48vh) rotate(210deg); }
+  100% { opacity: 0; transform: translate(var(--petal-drift), min(22rem, 70svh)) rotate(210deg); }
 }
 .closing-card .signature { display: block; }
 
+@media (max-width: 720px) {
+  .event-panel .event-copy { padding: 1.05rem .9rem; }
+  .event-copy::before { inset: 6px; }
+}
 @media (max-width: 600px) {
   .event-timepiece { gap: .62rem; }
   .timepiece-display { gap: .65rem; }
   .calendar-day { font-size: 2.62rem; }
   .watch-face { width: min(100%, 8.6rem); }
   .watch-caption { font-size: .94rem; }
-  .event-panel .event-copy { padding: 1.05rem .85rem; }
-  .event-copy::before { inset: 6px; }
   .grand-finale { padding-block: 3rem; }
   .finale-petals i:nth-child(n+9) { display: none; }
 }

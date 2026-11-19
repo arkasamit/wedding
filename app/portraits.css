@@ -85,8 +85,7 @@
 }
 .is-portrait-named .portrait-name-flourish path { animation: portrait-gold-draw 1.18s calc(.63s + var(--portrait-delay)) var(--ease-settle) both; }
 @keyframes portrait-write {
-  from { clip-path: inset(-18% 100% -18% 0); }
-  to { clip-path: inset(-18% 0 -18% 0); }
+  from { opacity: .78; transform: translateY(3px); }
 }
 
 .portrait-petals { position: absolute; z-index: 0; inset: -1.1rem -1.65rem 0; overflow: hidden; pointer-events: none; }
@@ -121,8 +120,8 @@
 }
 
 @media (max-width: 600px) {
-  [data-portrait="left"] { --portrait-slide: -22px; }
-  [data-portrait="right"] { --portrait-slide: 22px; }
+  [data-portrait="left"] { --portrait-slide: -12px; }
+  [data-portrait="right"] { --portrait-slide: 12px; }
   .portrait-entry { width: min(82%, 19rem); }
   .portrait-mandala { width: 74%; }
   [data-portrait="left"] .portrait-mandala { left: -22%; }

@@ -138,7 +138,7 @@ html:has(.entry-shell:not([data-stage="open"])) { overflow: hidden; overscroll-b
   width: 8px; height: 13px; opacity: 0;
 }
 .entry-shell:is([data-stage="opening"], [data-stage="open"]) .intro-petals i {
-  animation: ceremony-petal 4.1s var(--petal-delay) ease-in-out both;
+  animation: ceremony-petal 4.1s calc(.8s + var(--petal-delay)) ease-in-out both;
   animation-play-state: var(--ambient-state);
 }
 @keyframes ceremony-seal { to { rotate: 110deg; } }
@@ -147,8 +147,8 @@ html:has(.entry-shell:not([data-stage="open"])) { overflow: hidden; overscroll-b
 @keyframes ceremony-petal {
   0% { transform: translate(0, 0) rotate(-30deg); opacity: 0; }
   21%, 65% { opacity: .76; }
-  48% { transform: translate(calc(var(--petal-drift) * -.32), 37vh) rotate(70deg); }
-  100% { transform: translate(var(--petal-drift), 78vh) rotate(241deg); opacity: 0; }
+  48% { transform: translate(calc(var(--petal-drift) * -.32), 37svh) rotate(70deg); }
+  100% { transform: translate(var(--petal-drift), 78svh) rotate(241deg); opacity: 0; }
 }
 
 .hero-countdown {
@@ -215,6 +215,42 @@ html:has(.entry-shell:not([data-stage="open"])) { overflow: hidden; overscroll-b
 .closing-card h2 { color: var(--paper); font-size: 2rem; margin-bottom: .35rem; }
 .closing-card .lamp { width: 3.65rem; }
 
+.reception-card {
+  position: relative;
+  width: min(calc(100% - 2.5rem), 46rem);
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1rem;
+  padding: 1.1rem .9rem;
+  background: var(--wine);
+  border: 1px solid var(--gold);
+}
+.reception-card h2, .reception-card h3 {
+  color: var(--gold);
+  font: 650 1rem / 1.5 var(--font-bengali-sans), "Nirmala UI", sans-serif;
+}
+.reception-names {
+  margin-top: .2rem;
+  color: var(--paper);
+  font: 400 clamp(1.35rem, 2.8vw, 1.72rem) / 1.5 var(--font-bengali-serif), "Nirmala UI", serif;
+}
+.reception-contact { border-inline-start: 1px solid var(--gold); padding-inline-start: 1.2rem; }
+.reception-phones { display: flex; justify-content: center; flex-wrap: wrap; gap: .35rem .5rem; margin-top: .4rem; }
+.reception-phones a {
+  display: inline-grid;
+  place-items: center;
+  min-width: 8rem;
+  min-height: 44px;
+  padding-inline: .55rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 50%, transparent);
+  border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.reception-phones a:hover { color: var(--gold); border-color: var(--gold); }
+
 @media (max-width: 600px) {
   .entry-identity p { font-size: 1.22rem; }
   .entry-surround { inset: .55rem; }
@@ -238,10 +274,11 @@ html:has(.entry-shell:not([data-stage="open"])) { overflow: hidden; overscroll-b
   .countdown-time > div { min-height: 2.95rem; }
   .countdown-time dd { font-size: 1.46rem; }
   .closing-card h2 { font-size: 1.8rem; }
+  .reception-card { grid-template-columns: minmax(0, 1fr); gap: .85rem; }
+  .reception-contact { border-inline-start: 0; border-top: 1px solid var(--gold); padding: .8rem 0 0; }
 }
 @media (max-width: 360px) {
   .entry-identity h1 { font-size: 2.55rem; }
-  .nav-links { column-gap: .4rem; row-gap: 0; }
   .nav-links a { font-size: .86rem; }
 }
 @media (max-height: 440px) {

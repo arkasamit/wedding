@@ -130,7 +130,7 @@ h3 { font-size: 1.85rem; }
 .portrait-copy p + p { margin-top: .18rem; }
 .heart-overlay { display: grid; place-items: center; position: absolute; inset: 0; opacity: 0; pointer-events: none; }
 .heart-overlay svg { width: 84%; height: auto; stroke: var(--paper); stroke-width: .67; fill: color-mix(in srgb, var(--paper) 14%, transparent); filter: drop-shadow(0 0 10px var(--crimson)); }
-[data-heart="true"] .heart-overlay svg { animation: pulse-heart 3.5s ease-in-out infinite; }
+[data-heart="true"] .heart-overlay svg { animation: pulse-heart 3.5s ease-in-out infinite var(--ambient-state); }
 @keyframes pulse-heart { 48% { transform: scale(1.028); } }
 .heart-feedback { display: grid; place-items: center; position: absolute; right: .7rem; bottom: .7rem; width: 44px; aspect-ratio: 1; border-radius: 50%; background: var(--wine); color: var(--paper); pointer-events: none; }
 .heart-feedback svg { fill: var(--paper); }
@@ -169,12 +169,33 @@ address { max-width: 29rem; font-style: normal; font-size: 1.16rem; }
   .portrait-grid { --portrait-gap: 2rem; }
   .event-inner, .venue-inner { gap: 1.75rem; }
 }
+@media (max-width: 720px) {
+  .event-inner, .venue-inner { grid-template-columns: minmax(0, 1fr); text-align: center; }
+  .event-inner { padding-block: 2.2rem; gap: 1.2rem; }
+  .event-inner .event-timepiece { grid-column: 1; grid-row: 2; }
+  .event-inner .event-copy { grid-column: 1; grid-row: 1; }
+  .event-copy h3 { font-size: clamp(2.25rem, 6vw, 2.65rem); }
+  .haldi .event-copy h3 { font-size: clamp(2rem, 5.5vw, 2.4rem); }
+  .event-note { margin-inline: auto; }
+  .venue-inner { gap: 1.35rem; }
+  .nameplate { width: min(90%, 20rem); margin-inline: auto; padding-block: 1.2rem; }
+  .nameplate h2 { font-size: 2.85rem; }
+  address { margin-inline: auto; }
+  .venue-actions { justify-content: center; }
+}
+@media (max-width: 600px), (max-width: 900px) and (pointer: coarse) {
+  .nav { grid-template-columns: 44px minmax(0, 1fr) 44px; gap: .12rem .25rem; padding-block: .45rem .2rem; }
+  .monogram { position: relative; grid-column: 2; grid-row: 1; justify-self: center; }
+  .monogram svg {
+    position: absolute; inset-inline-end: calc(100% + .45rem); top: 50%;
+    width: clamp(1.4rem, 7vw, 2.2rem); translate: 0 -50%;
+  }
+  .music-control { grid-column: 3; grid-row: 1; }
+  .nav-links { display: grid; grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem; }
+  .nav-links a { font-size: .94rem; text-align: center; text-wrap: balance; }
+}
 @media (max-width: 600px) {
   .wrap { width: calc(100% - 2rem); }
-  .nav { grid-template-columns: minmax(0, 1fr) 44px; gap: 0 .6rem; padding-block: .45rem .35rem; }
-  .monogram { grid-column: 1 / -1; justify-self: center; }
-  .nav-links { gap: .75rem; justify-content: center; }
-  .nav-links a { font-size: .94rem; }
   .hero { padding-top: 3.2rem; padding-bottom: 1.5rem; }
   .toran { height: 48px; }
   .hero h1 { font-size: 3.1rem; }
@@ -193,22 +214,12 @@ address { max-width: 29rem; font-style: normal; font-size: 1.16rem; }
   h2 { font-size: 2rem; }
   h3 { font-size: 1.67rem; }
   .portrait-grid { grid-template-columns: minmax(0, 1fr); --portrait-gap: 1.25rem; }
-  .event-inner, .venue-inner { grid-template-columns: minmax(0, 1fr); text-align: center; }
-  .event-inner { padding-block: 2.2rem; gap: .8rem; }
-  .event-inner .event-timepiece { grid-column: 1; grid-row: 2; margin-top: .48rem; }
-  .event-inner .event-copy { grid-column: 1; grid-row: 1; }
-  .event-copy h3 { font-size: 2.45rem; }
-  .haldi .event-copy h3 { font-size: 2.1rem; }
-  .event-note { margin-inline: auto; }
-  .venue-inner { gap: 1.35rem; }
-  .nameplate { width: min(90%, 20rem); margin-inline: auto; padding-block: 1.2rem; }
-  .nameplate h2 { font-size: 2.85rem; }
-  address { margin-inline: auto; }
-  .venue-actions { justify-content: center; }
+}
+@media (max-width: 420px) {
+  .venue-actions .action { min-width: min(12rem, 100%); }
 }
 @media (max-width: 360px) {
   .hero h1 { font-size: 2.72rem; }
-  .nav-links { gap: .55rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
