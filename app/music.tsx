@@ -56,7 +56,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   }}>
     <audio
       ref={audio}
-      src="/wedding-shehnai-dhak.mp3"
+      src="/atlasaudio-piano-classical-631938.mp3"
       autoPlay
       hidden
       loop
