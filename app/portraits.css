@@ -20,15 +20,21 @@
 [data-portrait="right"] { --portrait-slide: 48px; --portrait-delay: .12s; }
 [data-portrait="left"] .portrait-mandala { left: -27%; }
 [data-portrait="right"] .portrait-mandala { right: -27%; }
-.portrait-entry.is-portrait-arriving {
-  animation: portrait-arrival 1.24s var(--portrait-delay) var(--ease-settle) both;
+.portrait-prepared:not(.is-portrait-arriving) .portrait-plane {
+  translate: var(--portrait-slide) 0;
 }
-.is-portrait-arriving .portrait-mandala {
-  animation: portrait-mandala-spin 4.85s calc(.12s + var(--portrait-delay)) ease-in-out both;
+.portrait-prepared:not(.is-portrait-arriving) .portrait-frame path { stroke-dashoffset: 1; }
+.portrait-prepared:not(.is-portrait-arriving) .portrait-mandala { rotate: -10deg; }
+.is-portrait-arriving .portrait-plane {
+  animation: portrait-arrival 2.8s var(--portrait-delay) ease-in-out backwards;
   animation-play-state: var(--ambient-state);
 }
-@keyframes portrait-arrival { from { transform: translate3d(var(--portrait-slide), 6px, 0); } }
-@keyframes portrait-mandala-spin { from { rotate: -20deg; } to { rotate: 58deg; } }
+.is-portrait-arriving .portrait-mandala {
+  animation: portrait-mandala-spin 6s var(--portrait-delay) ease-in-out both;
+  animation-play-state: var(--ambient-state);
+}
+@keyframes portrait-arrival { from { translate: var(--portrait-slide) 0; } to { translate: 0 0; } }
+@keyframes portrait-mandala-spin { from { rotate: -10deg; } to { rotate: 24deg; } }
 
 .portrait-frame {
   position: absolute;
@@ -47,8 +53,8 @@
 }
 .portrait-frame path { stroke-width: 1.7; vector-effect: non-scaling-stroke; }
 .portrait-frame path:nth-child(2) { stroke-width: .74; opacity: .78; }
-.is-portrait-arriving .portrait-frame path { animation: portrait-gold-draw 1.7s calc(.19s + var(--portrait-delay)) var(--ease-glide) both; }
-.is-portrait-arriving .portrait-frame path:nth-child(2) { animation-delay: calc(.37s + var(--portrait-delay)); }
+.is-portrait-arriving .portrait-frame path { animation: portrait-gold-draw 3s calc(.55s + var(--portrait-delay)) ease-in-out both var(--ambient-state); }
+.is-portrait-arriving .portrait-frame path:nth-child(2) { animation-delay: calc(.85s + var(--portrait-delay)); }
 @keyframes portrait-gold-draw { from { stroke-dashoffset: 1; } }
 
 .portrait-connection {
@@ -120,8 +126,8 @@
 }
 
 @media (max-width: 600px) {
-  [data-portrait="left"] { --portrait-slide: -12px; }
-  [data-portrait="right"] { --portrait-slide: 12px; }
+  [data-portrait="left"] { --portrait-slide: -24px; }
+  [data-portrait="right"] { --portrait-slide: 24px; --portrait-delay: 0s; }
   .portrait-entry { width: min(82%, 19rem); }
   .portrait-mandala { width: 74%; }
   [data-portrait="left"] .portrait-mandala { left: -22%; }

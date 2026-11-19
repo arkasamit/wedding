@@ -109,7 +109,7 @@ export const wedding: Wedding = {
   ],
   venue: {
     name: "তনয়া",
-    address: "তনয়া, ফিশারি পুকুর, হাট নওগাঁ, দক্ষিণ কালীতলা, নওগাঁ সদর, রাজশাহী।",
+    address: "তনয়া,দক্ষিণ কালীতলা, ফিশারি পুকুর, নওগাঁ সদর, নওগাঁ।",
     map: "https://maps.app.goo.gl/kM41G7792Kx1oc348",
   },
   theme: { wine: "#450D17", crimson: "#790F22", gold: "#C5A059", paper: "#F4E8D2", ink: "#15110F" },

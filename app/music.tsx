@@ -34,7 +34,7 @@ export function MusicToggle() {
   return <div className="music-control">
     <audio
       ref={audio}
-      src="/invitation-melody.mp3"
+      src="/atlasaudio-piano-classical-631938.mp3"
       preload="none"
       loop
       onPlaying={() => setPlaying(true)}

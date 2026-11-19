@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { EntranceOpened } from "./entrance-state";
 
 const revealRatio = 0.23;
+const portraitRevealRatio = 0.45;
 
 export function Cinema({ intensity }: { intensity: number }) {
   const opened = useContext(EntranceOpened);
@@ -24,14 +25,15 @@ export function Cinema({ intensity }: { intensity: number }) {
       const cleanups: (() => void)[] = [];
       const observer = new IntersectionObserver((entries) => {
         for (const entry of entries) {
-          if (entry.intersectionRatio >= revealRatio) {
+          const threshold = entry.target.classList.contains("portrait-entry") ? portraitRevealRatio : revealRatio;
+          if (entry.intersectionRatio >= threshold) {
             inView.add(entry.target);
             reveal(entry.target);
           } else {
             inView.delete(entry.target);
           }
         }
-      }, { threshold: revealRatio, rootMargin: "0px 0px -12px 0px" });
+      }, { threshold: [revealRatio, portraitRevealRatio], rootMargin: "0px 0px -12px 0px" });
 
       function reveal(target: Element) {
         const effect = pending.get(target);
@@ -80,6 +82,8 @@ export function Cinema({ intensity }: { intensity: number }) {
       }
 
       for (const entry of document.querySelectorAll(".portrait-entry")) {
+        entry.classList.add("portrait-prepared");
+        cleanups.push(() => entry.classList.remove("portrait-prepared"));
         animateClass(entry, "is-portrait-arriving", entry.querySelector("img") ?? undefined);
       }
       for (const copy of document.querySelectorAll(".portrait-copy")) {
